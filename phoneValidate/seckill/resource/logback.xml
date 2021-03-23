@@ -1,0 +1,237 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration  scan="true" scanPeriod="6 seconds"  debug="false">
+  <!--定义日志文件的存储地址 勿在 LogBack 的配置中使用相对路径-->
+
+
+  <property name="LOG_HOME" value="c:/ProgramCode/log" /> 
+  
+ 
+  <appender name="Console" class="ch.qos.logback.core.ConsoleAppender">
+    <target>System.out</target>  
+    <encoder>  
+       <!--格式化输出：%d表示日期，%thread表示线程名，%-5level：级别从左显示5个字符宽度%msg：日志消息，%n是换行符-->
+      <pattern>%d{yyyy-MM-dd HH:mm:ss} [%thread] %-5level %logger{30} - %msg%n  
+      </pattern>  
+    </encoder>  
+  </appender>  
+ 
+   <appender name="eConsole" class="ch.qos.logback.core.ConsoleAppender">
+    <!-- 日志输出编码 -->
+    <target>System.out</target>
+    <encoder>  
+       <!--格式化输出：%d表示日期，%thread表示线程名，%-5level：级别从左显示5个字符宽度%msg：日志消息，%n是换行符-->
+      <pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level %logger{50} - %msg%n  
+      </pattern>  
+    </encoder>  
+  </appender>  
+ 
+  <appender name="DAILY_FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">  
+ 
+    <file>${LOG_HOME}/myApp_daily.log</file>
+     <rollingPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
+       <fileNamePattern>${LOG_HOME}/myApp_daily.log.%d{yyyy-MM-dd}.%i.zip</fileNamePattern>  
+       <maxHistory>30</maxHistory>
+       <maxFileSize>10MB</maxFileSize>  
+      </rollingPolicy> 
+    <encoder> 
+      <!--格式化输出：%d表示日期，%thread表示线程名，%-5level：级别从左显示5个字符宽度%msg：日志消息，%n是换行符-->
+      <pattern>%d{yyyy-MM HH:mm:ss.SSS} [%thread] %-5level %logger{50} - %msg%n  
+      </pattern>  
+    </encoder> 
+  </appender> 
+  
+  
+   <appender name="FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">  
+    <file>${LOG_HOME}/myApp_file.log</file>
+    <rollingPolicy class="ch.qos.logback.core.rolling.FixedWindowRollingPolicy">  
+      <fileNamePattern>${LOG_HOME}/myApp_file.log.%i.zip</fileNamePattern>  
+      <minIndex>1</minIndex>
+      <maxIndex>3</maxIndex>
+     </rollingPolicy>   
+    <layout class="ch.qos.logback.classic.PatternLayout"> 
+      <!--格式化输出：%d表示日期，%thread表示线程名，%-5level：级别从左显示5个字符宽度%msg：日志消息，%n是换行符-->
+      <pattern>%d{yyyy-MM HH:mm:ss.SSS} [%thread] %-5level %logger{50} - %msg%n  
+      </pattern>  
+    </layout> 
+    <triggeringPolicy class="ch.qos.logback.core.rolling.SizeBasedTriggeringPolicy">
+                      <maxFileSize>500 KB</maxFileSize>  
+    </triggeringPolicy>  
+  </appender> 
+  
+<appender name="SIFT" class="ch.qos.logback.classic.sift.SiftingAppender">
+		<discriminator>
+			<Key>userId</Key>
+			<DefaultValue>unknown</DefaultValue>
+		</discriminator>
+		<sift>
+			<appender name="FILE-${userId}"
+				class="ch.qos.logback.core.rolling.RollingFileAppender">
+				<rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+					<fileNamePattern>d:/log/${userId}/%d{yyyyMMdd}.log
+					</fileNamePattern>
+				</rollingPolicy>
+				<encoder>
+					<pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level %logger{15}- %msg%n</pattern>
+				</encoder>
+			</appender>
+		</sift>
+	</appender>
+
+  
+  <appender name="FILE2" class="ch.qos.logback.core.rolling.RollingFileAppender">  
+    <file>${LOG_HOME}/myApp_file2.log</file>
+    <rollingPolicy class="ch.qos.logback.core.rolling.FixedWindowRollingPolicy">     
+      <fileNamePattern>${LOG_HOME}/myApp_file2.log.%i</fileNamePattern>  
+      <minIndex>1</minIndex>
+      <maxIndex>3</maxIndex>
+     </rollingPolicy>   
+    <layout class="ch.qos.logback.classic.PatternLayout"> 
+          <pattern>%d{yyyy-MM HH:mm:ss.SSS} [%thread] %-5level %logger{50} - %msg%n  
+      </pattern>  
+    </layout> 
+    <triggeringPolicy class="ch.qos.logback.core.rolling.SizeBasedTriggeringPolicy">
+                      <maxFileSize>50 MB</maxFileSize>  
+    </triggeringPolicy>  
+  </appender>   
+
+   <appender name="QUEUE" class="ch.qos.logback.classic.AsyncAppender">  
+        <discardingThreshold>0</discardingThreshold>  
+          <queueSize>10000</queueSize>  
+          <neverBlock>false</neverBlock>
+          <appender-ref ref="FILE2" />  
+  </appender>    
+ 
+ 
+   <root level="info" >   
+	  <appender-ref ref="Console" />   
+  </root>     
+    <!--
+   <logger name="com.atguigu" level = "debug"    >
+ 	  <appender-ref ref="eConsole" /> 
+  </logger> 
+   -->
+  
+ 
+  
+  
+ <!-- 
+  <logger name="com.atguigu" level = "debug"    >
+ 	  <appender-ref ref="STDOUT" /> 
+  </logger>   
+  
+   <logger name="com.atguigu" level = "info"    >
+ 	<appender-ref ref="QUEUE" /> 
+ </logger>    --> 
+ 
+ 
+ 
+<!-- 
+ <logger name="com.atguigu.test2.LogbackAsync" level = "info">
+ 	<appender-ref ref="QUEUE" /> 
+ </logger>  
+
+ <logger name="com.atguigu.test2.LogbackCompare" level = "info">
+ 	<appender-ref ref="FILE" /> 
+ </logger>   -->
+ 
+
+ 
+    <logger name="com.atguigu.test2.LogbackCompare" level = "INFO">
+   	     <appender-ref ref="FILE"/>  
+ 
+  </logger> 
+  
+     <logger name="com.atguigu.test2.LogbackAsync" level = "INFO">
+   	     <appender-ref ref="QUEUE"/>  
+  </logger>  
+	 
+<!--       <logger name="java.util.List" level = "INFO">
+   	     <appender-ref ref="STDOUT"/>  
+   	     <appender-ref ref="SIFT"/>
+  	     <appender-ref ref="DAILY_FILE" /> 
+  </logger> -->
+ 
+
+    
+    
+       <!--   按用户分片 -->
+<!--  <appender name="SIFT" class="ch.qos.logback.classic.sift.SiftingAppender">
+		<discriminator>
+			<Key>userId</Key>
+			<DefaultValue>unknown</DefaultValue>
+		</discriminator>
+		<sift>
+			<appender name="FILE-${userId}"
+				class="ch.qos.logback.core.rolling.RollingFileAppender">
+				<rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+					<fileNamePattern>d:/log/${userId}/%d{yyyyMMdd}.log
+					</fileNamePattern>
+				</rollingPolicy>
+				<encoder>
+					<pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level %logger{15}- %msg%n</pattern>
+				</encoder>
+			</appender>
+		</sift>
+	</appender> -->
+    
+ 
+    
+    
+    
+<!--   级别过滤器-->
+<!--  <filter class="ch.qos.logback.classic.filter.LevelFilter">   
+      <level>INFO</level>   
+      <onMatch>ACCEPT</onMatch>   
+      <onMismatch>DENY</onMismatch>   
+    </filter>   -->
+    
+    
+<!--   求值过滤器-->    
+<!--  <filter class="ch.qos.logback.core.filter.EvaluatorFilter"> 
+<evaluator>
+     <expression>message.contains("dao")</expression>
+ </evaluator>
+<OnMismatch>DENY</OnMismatch>
+<OnMatch>ACCEPT</OnMatch>
+   </filter>  -->
+    
+    
+ <!-- 异步输出-->
+
+<!--  <appender name="FILE2" class="ch.qos.logback.core.rolling.RollingFileAppender">  
+    <file>${LOG_HOME}/myApp_file2.log</file>
+    <rollingPolicy class="ch.qos.logback.core.rolling.FixedWindowRollingPolicy">     
+      <fileNamePattern>${LOG_HOME}/myApp_file2.log.%i</fileNamePattern>  
+      <minIndex>1</minIndex>
+      <maxIndex>3</maxIndex>
+     </rollingPolicy>   
+    <layout class="ch.qos.logback.classic.PatternLayout"> 
+          <pattern>%d{yyyy-MM HH:mm:ss.SSS} [%thread] %-5level %logger{50} - %msg%n  
+      </pattern>  
+    </layout> 
+    <triggeringPolicy class="ch.qos.logback.core.rolling.SizeBasedTriggeringPolicy">
+                      <maxFileSize>50 MB</maxFileSize>  
+    </triggeringPolicy>  
+  </appender>  -->
+
+<!--  <appender name="QUEUE" class="ch.qos.logback.classic.AsyncAppender">  
+        <discardingThreshold>10</discardingThreshold>  
+          <queueSize>10000</queueSize>  
+          <neverBlock>false</neverBlock>
+          <appender-ref ref="FILE2" />  
+  </appender>   -->
+  
+
+    
+    
+
+    
+    
+ 
+  
+    
+
+
+
+
+</configuration>
